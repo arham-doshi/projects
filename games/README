@@ -4,11 +4,11 @@ I have made all the games in code sculptor using python and simple gui
 
 Q)How to run a game 
 A)	S1)go to firefox browser and go to codesulptor and save that page to your local computer
-		S2)open the game and copy paste that code in codesulptor that is in your local machine
-		S3)the games are dependent on the images and all the images are in pypics folder
-			 so when you copy paste code of the game just see if you are importing any images
-			 if you importing some image thing then change its path to the curent path of that image in your local machine
-		S4)just press the run button on the upper left corner . It press first button were there are 5 buttons.
-		S5)game started
+	S2)open the game and copy paste that code in codesulptor that is in your local machine
+	S3)the games are dependent on the images and all the images are in pypics folder
+	   so when you copy paste code of the game just see if you are importing any images
+   	   if you importing some image thing then change its path to the curent path of that image in your local machine
+	S4)just press the run button on the upper left corner . It press first button were there are 5 buttons.
+	S5)game started
 
 for any doubt you contact me at : arhamd.official@gmail.com
