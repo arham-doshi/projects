@@ -1,0 +1,106 @@
+import simplegui,math
+pos=[["black",1]]
+i=0
+w=1
+message = "Welcome!"
+c="black"
+c1=""
+c2=0
+line=True
+circle=0
+rctngl=0
+circ=[]
+cird=[]
+rcc=[]
+rcd=[]
+colour={"r":"red","b":"blue","g":"green","y":"yellow","w":"white","bk":"black"}
+def md(p):
+    global pos,circ,rcc
+    if circle :
+        circ.append(p)
+    
+    if rctngl :
+        rcc.append(p)
+    if line:
+        pos[i].append(p)
+    
+def  wd(m):
+    
+    global pos,i,w
+    
+        
+    w=int(m)
+    i+=1
+    pos.append([c,w])
+    
+def cir():
+    global circle,line
+    circle=1
+    line=False
+    
+    
+def cir1():
+    global circle,cird,circ,line
+    f=circ[0]
+    l=circ[-1]
+    centre=[((f[0]+l[0])/2),((f[1]+l[1])/2)]
+    r=math.sqrt(((f[0]-l[0])**2)+((f[1]-l[1])**2))/2
+    circle=0
+    circ=[]
+    line=True
+    
+    cird.append((c,w,centre,r))
+
+def rc():
+    global rctngl,line
+    rctngl=True
+    line=False
+    
+def rc1():
+    global rctngl,rcc,rcd,line
+    rcd.append([[list(rcc[0]),[rcc[-1][0],rcc[0][1]],list(rcc[-1]),[rcc[0][0],rcc[-1][1]]],c,w])
+    rcc=[]
+    rctngl=0
+    line=True
+  
+    
+# Handler for mouse" click
+def col(n):
+    global pos,i,c,w,line
+    if  n in colour :
+        i+=1
+        c=colour[n]
+        pos.append([c,w])
+        
+        
+    
+
+# Handler to draw on canvas
+def draw(canvas):
+    for j in pos :
+        c1=j[0]
+        c2=j[1]
+        for k in range(2,len(j)):
+            canvas.draw_circle(j[k],c2*2,1,c1,c1)
+    
+    for i in cird :
+        canvas.draw_circle(i[2],i[3],i[1],i[0])
+        
+    for j in range(len(rcd)) :
+       
+        canvas.draw_polygon(rcd[j][0],rcd[j][2],rcd[j][1])
+
+# Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Home", 500, 500)
+frame.set_canvas_background("white")
+frame.set_draw_handler(draw)
+frame.set_mousedrag_handler(md)
+frame.add_input("width",wd,40)
+frame.add_input("color r,y,b,g,bk",col,40)
+frame.add_button("new circle",cir)
+frame.add_button("draw circle",cir1)
+frame.add_button("new rectangle",rc)
+frame.add_button("draw rectangle",rc1)
+
+# Start the frame animation
+frame.start()

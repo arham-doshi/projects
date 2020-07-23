@@ -1,0 +1,63 @@
+import simplegui,random
+c1=[1,0]
+d=0
+w=0
+t=0
+d1=simplegui.load_image('/home/arham/folder1/pypics/1.jpg')
+d2=simplegui.load_image('/home/arham/folder1/pypics/2.jpg')
+d3=simplegui.load_image('/home/arham/folder1/pypics/3.jpg')
+d4=simplegui.load_image('/home/arham/folder1/pypics/4.jpg')
+d5=simplegui.load_image('/home/arham/folder1/pypics/5.jpg')
+d6=simplegui.load_image('/home/arham/folder1/pypics/6.jpg')
+dice=(d1,d2,d3,d4,d5,d6)
+snl={(6,3):(5,0),(9,4):(7,0),(6,5):(9,0),(7,8):(6,6),(2,8):(0,2),(5,9):(8,3),(5,0):(5,3),(3,2):(2,4),(9,0):(1,5),(8,4):(6,8),(9,6):(1,9),(2,6):(3,8)}
+def mv():
+    global c1,d,w
+    d=random.randrange(1,7)
+    
+    if c1[0]+d>10 :
+        c1[1]+=1
+        c1[0]=(c1[0]+d)%10
+    else :
+        c1[0]=(c1[0]+d)
+    if c1==[10,9]:
+        w=1
+    if c1[1]==10 :
+            c1[1]-=1
+            c1[0]=10+c1[0]-d
+            
+            
+    
+    if snl.has_key(tuple(c1)) :
+        c1=list(snl[tuple(c1)])
+    print d,c1
+    timer.start()
+    
+def tm():
+    global t
+    t+=1
+pic=simplegui.load_image('/home/arham/folder1/pypics/snl.jpg')
+def main(canvas):
+    global c1,t,w
+  
+    canvas.draw_image(pic,[300,300],[600,600],[300,300],[600,600])
+    if c1[1]%2==0 :
+        co1=[30+(c1[0]-1)*60,570-(c1[1])*60]
+    else :
+        co1=[570-(c1[0]-1)*60,570-(c1[1])*60]
+    canvas.draw_circle(co1,20,1,'black','yellow')
+    if timer.is_running():
+        if t<=20 :
+            canvas.draw_image(dice[d-1],[50,50],[100,100],[300,300],[100,100])
+        else :
+            timer.stop()
+            t=0
+    if w==1 :
+        canvas.draw_text("you won congo",[200,200],50,"black")
+
+frame=simplegui.create_frame('Snakes and ladders',600,600)
+frame.set_draw_handler(main)
+frame.add_button('move',mv)
+timer=simplegui.create_timer(100,tm)
+frame.start()
+

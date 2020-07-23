@@ -1,0 +1,89 @@
+import simplegui ,random 
+w,h=600,400
+p1=p2=h/2
+pv1=pv2=0
+x,y=w/2,h/2
+r=20
+s1,s2=0,0
+vx=random.randint(2,5)
+vy=random.randint(2,5)
+
+
+def kd(key):
+    global pv1,pv2
+    if key==simplegui.KEY_MAP["down"]:
+        pv2=4
+    if key==simplegui.KEY_MAP["up"]:
+        pv2=-4
+    if key==simplegui.KEY_MAP["w"]:
+        pv1=-4
+    if key==simplegui.KEY_MAP["s"]:
+        pv1=4
+
+def ku(key):
+    global pv1,pv2
+    if key==simplegui.KEY_MAP["down"]:
+        pv2=0
+    if key==simplegui.KEY_MAP["up"]:
+        pv2=0
+    if key==simplegui.KEY_MAP["w"]:
+        pv1=0
+    if key==simplegui.KEY_MAP["s"]:
+        pv1=0
+    
+        
+def dh(canvas):
+    global p1,p2,s1,s2,pv1,pv2,x,y,vx,vy
+    canvas.draw_line([10,0],[10,h],1,"white")
+    canvas.draw_line([w-10,0],[w-10,h],1,"white")
+    canvas.draw_line([w/2,0],[w/2,h],2,"white")
+    canvas.draw_circle([x,y],r,1,"yellow","yellow")
+    
+    canvas.draw_text("score :"+str(s1)+":"+str(s2),[w/2-100,60],30,"pink")
+    
+    canvas.draw_line([5,p1-40],[5,p1+40],10,"white")
+    canvas.draw_line([w-5,p2-40],[w-5,p2+40],10,"white")
+    p1+=pv1
+    p2+=pv2
+    if p1+40>=h or p1-40<=0 :
+        pv1=0
+        
+    if p2+40>=h or p2-40<=0 :
+        pv2=0
+
+    x+=vx
+    y+=vy
+    
+    if x-r<=10 :
+        if (y-r)<=p1+40   and (y+r)>=p1-40 :
+            vx=-vx
+            vx+=1
+        else : #(y+r)>=h or (y-r)<=0 :
+            s2+=1
+            x,y=w/2,h/2
+            vx=random.randint(2,5)
+            vy=random.randint(2,5)
+
+            
+    if x+r>=w-10 :
+        if (y-r)<=p2+40   and (y+r)>=p2-40 :
+            vx=-vx
+            vx-=1
+        else : #(y+r)>=h or (y-r)<=0 :
+            s1+=1
+            x,y=w/2,h/2
+            vx=random.randint(2,5)
+            vy=random.randint(2,5)
+
+
+            
+    if (y+r)>=h or (y-r)<=0 :
+        vy=-vy
+    
+     
+
+frame=simplegui.create_frame("pong",w,h)
+frame.set_draw_handler(dh)
+frame.set_keydown_handler(kd)
+frame.set_keyup_handler(ku)
+frame.start()

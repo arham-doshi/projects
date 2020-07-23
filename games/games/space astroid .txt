@@ -1,0 +1,179 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+# CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
+# Some features may work in other browsers, but do not expect
+# full functionality.  It does NOT run in Internet Explorer.
+
+import simplegui,random,math
+bg=simplegui.load_image("/home/arham/folder1/pypics/background.png")
+sp=simplegui.load_image("/home/arham/folder1/pypics/ship.png")
+st=simplegui.load_image("/home/arham/folder1/pypics/shot.png")
+ad=simplegui.load_image("/home/arham/folder1/pypics/asteroid.png")
+score=0
+con=[]
+col=simplegui.load_image("/home/arham/folder1/pypics/explosion_alpha.png")
+bullets=[]
+astroids=[]
+astropath=[[0,[800,300]],[345 , [800, 191]],[330 , [800, 65]],[315 , [704,0]],[300 , [575,0]],[285 , [482,0]],[270 , [400.0, -10.0]],[255 , [317,0]],[240 , [225,0]],[225 , [95,0]],[210 , [0, 65]],[195 , [0, 191]],[180 , [0, 300]],[165 , [0, 408]],[150 , [0, 535]],[135 , [95, 600]],[120 , [225, 600]],[105 , [317, 600]],[90 , [400, 600]],[75 , [482,600]],[60 , [575, 600]],[45 , [704, 600]],[30 , [800, 535]],[15 , [800, 408]]]
+
+class Ship():
+    def __init__(self,pos,angle):
+        self.pos=pos
+        self.angle=angle
+        self.life=3
+        self.boost=0
+        self.fuel=2000
+    def move(self):
+        self.pos[0]+=(10*math.cos(math.radians(self.angle)))
+        self.pos[1]+=(10*math.sin(math.radians(self.angle)))
+        self.fuel-=5
+        if self.pos[0]>800 :
+            self.pos[0]=0
+            self.pos[1]=600 - self.pos[1]
+        if self.pos[0]<0 :
+            self.pos[0]=800
+            self.pos[1]=600 - self.pos[1]
+        if self.pos[1]>600 :
+            self.pos[0]=800-self.pos[0]
+            self.pos[1]=0
+        if self.pos[1]<0 :
+            self.pos[0]=800-self.pos[0]
+            self.pos[1]=600
+    def tleft(self):
+        self.angle-=15
+        self.fuel-=1
+        if self.angle<0 :
+            self.angle=360+self.angle        
+    def back(self):
+        self.pos[0]-=(10*math.cos(math.radians(self.angle)))
+        self.pos[1]-=(10*math.sin(math.radians(self.angle)))
+        self.fuel-=5
+        if self.pos[0]>800 :
+            self.pos[0]=0
+            self.pos[1]=600-self.pos[1]
+        if self.pos[0]<0 :
+            self.pos[0]=800
+            self.pos[1]=600-self.pos[1]
+        if self.pos[1]>600 :
+            self.pos[0]=800-self.pos[0]
+            self.pos[1]=0
+        if self.pos[1]<0 :
+            self.pos[0]=800-self.pos[0]
+            self.pos[1]=600
+    
+    def tright(self):
+        self.angle+=15
+        self.fuel-=1
+        self.angle=self.angle%360
+        
+
+class Bullet():
+    def __init__(self,pos,angle):
+        self.pos=pos
+        self.angle=angle
+
+    def go(self):
+        self.pos[0]+=(10*math.cos(math.radians(self.angle)))
+        self.pos[1]+=(10*math.sin(math.radians(self.angle)))       
+class Astroid():
+    def __init__(self,angle,pos):
+        self.pos=pos
+        self.angle=angle
+        self.rot=0
+        self.col=0
+        self.colcount=0
+    def go(self):
+        self.pos[0]+=(math.cos(math.radians(self.angle)))
+        self.pos[1]+=(math.sin(math.radians(self.angle)))
+    
+        
+ship=Ship([400,300],0)
+
+
+
+
+def kd(key):
+    global bullets
+    if key==simplegui.KEY_MAP["up"]:
+        ship.move()
+        ship.boost=1
+        
+    if key==simplegui.KEY_MAP["down"]:
+        ship.back()
+        
+    if key==simplegui.KEY_MAP["right"]:
+        ship.tright()
+        
+    if key==simplegui.KEY_MAP["left"]:
+        ship.tleft()
+        
+    if key==simplegui.KEY_MAP["space"]:
+        c=Bullet(ship.pos[:],ship.angle)
+        bullets.append(c)
+def ku(key):
+    if key==simplegui.KEY_MAP["up"]:
+        ship.boost=0
+def tm():
+    astro=random.choice(astropath)
+    ang=astro[0]-180
+    if ang<0 :
+        ang+=360
+    a=Astroid(ang,astro[1][:])
+
+    astroids.append(a)
+        
+def draw(canvas):
+    global bullets,astroids,ad,score,con
+    canvas.draw_image(bg,[400,300],[800,600],[400,300],[800,600])
+    if ship.boost :
+        canvas.draw_image(sp,[135,45],[90,90],ship.pos,[90,90],(math.radians(ship.angle)))
+    else :
+        canvas.draw_image(sp,[45,45],[90,90],ship.pos,[90,90],(math.radians(ship.angle)))
+    for i in bullets :
+        canvas.draw_image(st,[5,5],[10,10],i.pos,[10,10])
+        i.go()
+        if i.pos[0]>800 or i.pos[0]<0 or i.pos[1]>600 or i.pos[1]<0 :
+                bullets.remove(i)
+                
+
+    
+    for i in astroids :
+        
+        canvas.draw_image(ad,[45,45],[90,90],i.pos,[90,90],math.radians(i.rot))
+        i.rot+=1
+        i.go()
+        for j in bullets :
+            if math.sqrt((i.pos[0]-j.pos[0])**2+(i.pos[1]-j.pos[1])**2)<=40 :
+                score+=1
+                astroids.remove(i)
+                con.append([i.pos,0])
+                bullets.remove(j)
+        if math.sqrt((i.pos[0]-ship.pos[0])**2+(i.pos[1]-ship.pos[1])**2)<=70 :
+            ship.life-=1
+            astroids=[]
+            break
+        if i.pos[0]>800 or i.pos[0]<0 or i.pos[1]>600 or i.pos[1]<0 :
+            astroids.remove(i)
+    canvas.draw_text("score :"+str(score),[600,60],30,"aqua")    
+    for i in range(ship.life):
+        canvas.draw_image(sp,[135,45],[90,90],[600 + i*50,100],[45,45],(math.radians(270)))
+    canvas.draw_line([600,140],[600 +ship.fuel/20,140],20,"aqua")    
+    for i in con :
+        canvas.draw_image(col,[64 +i[1]*128,64],[128,128],i[0],[80,80])
+        if i[1]>=24 :
+            con.remove(i)
+        else :
+            i[1]+=1
+
+
+frame = simplegui.create_frame("Home", 800,600)
+frame.set_keydown_handler(kd)
+frame.set_keyup_handler(ku)
+tim=simplegui.create_timer(2000,tm)
+tim.start()
+frame.set_draw_handler(draw)
+
+# Start the frame animation
+frame.start()
+

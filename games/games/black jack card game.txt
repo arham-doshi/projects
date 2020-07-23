@@ -1,0 +1,162 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+# CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
+# Some features may work in other browsers, but do not expect
+# full functionality.  It does NOT run in Internet Explorer.
+
+import simplegui,random
+
+suits = ('C', 'S', 'H', 'D')
+ranks = ('A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K')
+values = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 'Q':10, 'K':10}
+card_images = simplegui.load_image("/home/arham/folder1/pypics/cards.png")
+card_back = simplegui.load_image("/home/arham/folder1/pypics/card_back.png")
+v=0
+vp=0
+vd=0
+game=0
+score=0
+in_play=False
+
+
+# Handler for mouse click
+class Cards():
+    def __init__(self,suit,rank):
+        self.suit=suit
+        self.rank=rank
+    def __str__(self):
+        return self.suit+self.rank
+    def draw(self,canvas,pos):
+        global ph,dh
+        
+        p=[36.5 + 73*(ranks.index(self.rank)),49 + 98*(suits.index(self.suit))]
+        canvas.draw_image(card_images,p,[72,96],pos,[72,96])
+
+
+class Deck():
+        
+    def __init__(self):        
+        self.deck=[]
+        for S in suits:
+            for R in ranks:
+                c=Cards(S,R)
+                self.deck.append(c)
+    def shuffel(self):
+        random.shuffle(self.deck)
+    def withdraw(self):
+        return self.deck.pop(0)
+    
+class Hand:
+    def __init__(self):
+        self.h=""
+        self.hand=[]
+
+    def __str__(self):
+        return "Hand contains "+str(self.h)
+
+    def add_card(self, card):
+        self.h = str(card)+self.h
+        self.hand.insert(0,card)
+    def get_value(self):
+        if len(self.h)>0:
+            v=0
+            for l in range(1,len(self.h),2):
+                    v+=values[self.h[l]]
+            if "A" in self.h and v<=11:
+                    v+=10
+            return v
+    def draw(self,canvas,pos):
+        global ph,dh
+        for i in self.hand:
+            i.draw(canvas,pos)
+            pos[0]+=73
+
+def deal():
+    global vd,vp,game,score,ph,dh,in_play,D,msg
+    if in_play:
+        msg="Abandon! You lost !"
+        score -= 1
+        in_play=False
+    else :
+        msg="Click Hit or Stand"
+        in_play = True
+        D=Deck()
+        D.shuffel()
+        
+        vp=0
+        vd=0
+
+        ph=Hand()
+        dh=Hand()
+        ph.add_card(D.withdraw())
+        ph.add_card(D.withdraw())
+        dh.add_card(D.withdraw())
+        dh.add_card(D.withdraw())
+        
+        game+=1
+
+def hit():
+    global vd,vp,game,score,ph,dh,in_play,D,msg
+    if in_play:
+        ph.add_card(D.withdraw())
+        vd=dh.get_value()
+        vp=ph.get_value()
+        if vp>21 or  vp==vd :
+            score -= 1
+            msg="Your game busted. NEW DEAL ?"+"points"+str(vd)+":"+str(vp)
+            in_play=False
+        elif vp>vd:            
+            score += 1
+            msg="You win ! NEW DEAL ?"+"points"+str(vd)+":"+str(vp)
+            in_play=False
+        
+def stand():
+    global vd,vp,game,score,ph,dh,in_play,D,msg
+    if in_play:
+        dh.add_card(D.withdraw())
+        vd=dh.get_value()
+        vp=ph.get_value()
+        if vd>21  :
+            score += 1
+            msg="deler's game busted. NEW DEAL ?"+"points"+str(vd)+":"+str(vp)
+            in_play=False
+        elif vd>vp or  vp==vd:            
+            score -= 1
+            msg="deler wins ! NEW DEAL ?"+"points"+str(vd)+":"+str(vp)
+            in_play=False
+        
+    
+
+# Handler to draw on canvas
+def draw(canvas):
+    global game,score,ph,dh,in_play,msg
+    canvas.draw_text("Game: "+str(game)+"Score: "+str(score), [210,100], 25, "Yellow")
+    canvas.draw_text("BlackJack", [210,70], 48, "Aqua")
+    canvas.draw_text("Dealer", [20,170], 36, "White")
+    canvas.draw_text("Player", [20,380], 36, "White")
+    canvas.draw_text(msg, [160,380], 24, "Red")
+    
+    
+    
+    ph.draw(canvas,[50,450][:])
+    dh.draw(canvas,[50,250][:])
+    if in_play==True :
+            canvas.draw_image(card_back,[35.5,48],[71,96],[50,250],[71,96])
+            
+    
+    
+    
+    
+
+# Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Home", 600,600)
+frame.set_canvas_background("Green")
+#create buttons and canvas callback
+frame.add_button("Deal", deal, 200)
+frame.add_button("Hit",  hit, 200)
+frame.add_button("Stand", stand, 200)
+frame.set_draw_handler(draw)
+deal()
+# Start the frame animation
+frame.start()

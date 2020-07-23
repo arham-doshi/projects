@@ -1,0 +1,91 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+# CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
+# Some features may work in other browsers, but do not expect
+# full functionality.  It does NOT run in Internet Explorer.
+
+import simplegui,random
+a=range(1,8)
+c=a+a
+print c
+random.shuffle(c)
+plain=[0]*14
+c2=False
+c1=True
+k1=k2=0
+match=0
+print c
+atmp=win=0
+
+
+# Handler for mouse click
+def click(key):
+    global c1,c2,k1,k2,plain,match,c,atmp,win
+    k=0
+    for i in range(14):
+        if key[0]>=i*50 and key[0]<(i+1)*50 :
+            k=i
+            
+    if plain[k]==0 :   
+        if c1 :
+            if match==0 :
+                plain[k1]=0
+                plain[k2]=0
+
+
+            k1=k
+            plain[k1]=1
+
+            c1=False
+            c2=True
+        else :
+
+            if c[k]==c[k1] :
+                match=1
+                plain[k]=1
+                plain[k1]=1
+                atmp+=1
+                win+=1
+            else :
+                plain[k]=1
+                k2=k
+                match=0
+                atmp+=1
+            c1=not c1
+            c2=not c2 
+            
+    msg.set_text("attempt :"+str(atmp)+""*10+"win :"+str(win))
+            
+        
+        
+        
+    
+   
+    
+    
+
+# Handler to draw on canvas
+def draw(canvas):
+    
+    d=len(c)
+    for i in range(d):
+        canvas.draw_text(str(c[i]),[25+i*50,50],25,"white")
+    
+    for i in range(d):
+        if plain[i]==0:
+            canvas.draw_polygon([[i*50,0],[i*50,100],[(i+1)*50,100],[(i+1)*50,0]],2,"black","yellow")
+        
+    
+    
+   
+
+# Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Home", 700, 100)
+frame.add_button("Click me", click)
+frame.set_draw_handler(draw)
+frame.set_mouseclick_handler(click)
+msg=frame.add_label("your score is here")
+
+# Start the frame animation
+frame.start()

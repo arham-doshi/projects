@@ -1,0 +1,111 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+# CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
+# Some features may work in other browsers, but do not expect
+# full functionality.  It does NOT run in Internet Explorer.
+
+import simplegui,random
+particles=[]
+go=[[0,1],[1,0],[-1,0],[0,-1]]
+col=["white","red","yellow","blue","lime"]
+choice=0
+c=0
+p=[]
+v=1
+    
+def clear():
+    global particles
+    particles=[]
+
+class particle():
+    def __init__(self,po,col):
+        self.pos=po
+        self.col=col
+    def update(self):
+        go1=random.choice(go)
+        self.pos[0]+=go1[0]
+        self.pos[1]+=go1[1]
+    def move(self,l):
+        self.pos[0]+=l[0]
+        self.pos[1]+=l[1]
+
+def addpart():
+    global choice
+    choice=1
+    for i in range(200):
+        addp([200,200])
+
+def burst():
+    global choice
+    choice=2
+    
+    
+    
+def drag(pos):
+    if choice==1 :
+        addp(pos)
+        
+def vib():
+    global v
+    v=1
+def stp():
+    global v
+    v=0
+def addp(pos):
+    global particles,choice,p,c
+    if choice==2 :
+        p=pos
+        c=2
+    else:
+    
+        co=random.choice(col)
+        particles.append(particle(list(pos)[:],co))
+
+for i in range(200):
+    addp([200,200])
+    
+    
+# Handler to draw on canvas
+def draw(canvas):
+    global choice,p,v,particles,c
+    for i in particles :
+        
+        canvas.draw_circle(i.pos,5,1,i.col,i.col)
+        if v==1 :
+            i.update()
+    #p=[200,200]    
+    if c==2 :
+        for i in particles :
+            if i.pos[0]>p[0]:
+                i.pos[0]+=random.randint(1,2)
+            if i.pos[0]<p[0]:
+                i.pos[0]-=random.randint(1,2)
+            if i.pos[1]>p[1]:
+                i.pos[1]+=random.randint(1,2)
+            if i.pos[1]<p[1]:
+                i.pos[1]-=random.randint(1,2)
+            if i.pos[0]>400 or i.pos[0]<0 or i.pos[1]>400 or i.pos[1]<0 :
+                particles.remove(i)
+                
+        if particles==[] :
+            c=0
+            
+        
+     
+
+
+# Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Home", 400,400)
+frame.add_button("clear",clear)
+frame.add_button("add particles",addpart)
+frame.add_button("burst",burst)
+frame.add_button("vibrate",vib)
+frame.add_button("stop",stp)
+frame.set_mouseclick_handler(addp)
+frame.set_mousedrag_handler(drag)
+
+frame.set_draw_handler(draw)
+
+# Start the frame animation
+frame.start()

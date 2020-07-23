@@ -1,0 +1,95 @@
+import simplegui,math,random
+w=h=400
+
+o1=[(w/3),h/2]
+r1=40
+o2=[(2*w)/3,h/2]
+r2=40
+vx1=vx2=vy1=vy2=s1=s2=0
+def kd(key):
+    global vx1,vy1,vx2,vy2
+    if key==simplegui.KEY_MAP["w"] :
+        vy1=-4
+    if key==simplegui.KEY_MAP["s"] :
+        vy1=4
+    if key==simplegui.KEY_MAP["a"] :
+        vx1=-4
+    if key==simplegui.KEY_MAP["d"] :
+         vx1=4
+    if key==simplegui.KEY_MAP["up"] :
+        vy2=-4
+    if key==simplegui.KEY_MAP["down"] :
+        vy2=4
+    if key==simplegui.KEY_MAP["left"] :
+        vx2=-4
+    if key==simplegui.KEY_MAP["right"] :
+        vx2=4
+            
+def ku(key):
+    global vx1,vy1,vx2,vy2
+    if key==simplegui.KEY_MAP["w"] :
+        vy1=0
+    if key==simplegui.KEY_MAP["s"] :
+        vy1=0
+    if key==simplegui.KEY_MAP["a"] :
+        vx1=0
+    if key==simplegui.KEY_MAP["d"] :
+         vx1=0
+    if key==simplegui.KEY_MAP["up"] :
+        vy2=0
+    if key==simplegui.KEY_MAP["down"] :
+        vy2=0
+    if key==simplegui.KEY_MAP["left"] :
+        vx2=0
+    if key==simplegui.KEY_MAP["right"] :
+        vx2=0
+    
+            
+            
+def dh(canvas):
+    global s1,s2,o1,o2
+    canvas.draw_circle(o1,r1,2,"black","yellow")
+    canvas.draw_circle(o2,r2,2,"black","red")
+    canvas.draw_line([10,0],[10,h],2,"black")
+    canvas.draw_line([w-10,0],[w-10,h],2,"black")
+    canvas.draw_line([0,10],[w,10],2,"black")
+    canvas.draw_line([0,h-10],[w,h-10],2,"black")
+    
+    o1[0]+=vx1
+    o1[1]+=vy1
+    o2[0]+=vx2
+    o2[1]+=vy2
+    
+    if o1[0]+r1>=w-10 or o1[0]-r1<=10 or o1[1]+r1>=h-10 or o1[1]-r1<=10 :
+        s2+=1
+        o1=[(w/3),h/2]
+        o2=[(2*w)/3,h/2]
+    if o2[0]+r2>=w-10 or o2[0]-r2<=10 or o2[1]+r2>=h-10 or o2[1]-r2<=10 :
+        s1+=1
+        o1=[(w/3),h/2]
+        o2=[(2*w)/3,h/2]
+    
+    canvas.draw_text("score:"+str(s1)+":"+str(s2),[w/2-100,50],30,"lime")
+    if math.sqrt(math.pow(o1[0]-o2[0],2)+math.pow(o1[1]-o2[1],2))<=(r1+r2) :
+        canvas.draw_text("collision",[w/2,h/2],30,"lime")
+        while True :    
+            o1[0]+=random.randint(-100,100)/2
+            o1[1]+=random.randint(-100,100)/2
+            o2[0]+=random.randint(-100,100)/2
+            o2[1]+=random.randint(-100,100)/2
+            if math.sqrt(math.pow(o1[0]-o2[0],2)+math.pow(o1[1]-o2[1],2))!=(r1+r2) :
+                break
+
+
+       
+
+
+frame=simplegui.create_frame("sumo",w,h)
+frame.set_canvas_background("white")
+frame.set_draw_handler(dh)
+frame.set_keydown_handler(kd)
+frame.set_keyup_handler(ku)
+
+
+
+frame.start()
