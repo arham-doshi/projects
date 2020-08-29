@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title> blogs</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" type="text/css" >
+</head>    
+<body>
+    <div class="ui fixed inverted menu">
+        <div class="ui container">
+            <div class="header item"><i class="icon code"></i>blog site</div>
+            <a class="item" href="/blogs">home</a>
+            <a class="item" href="/blogs/new">new</a>
+        </div>
+    </div>
+    <div class="ui main text container segment" style="margin:7em">
+        <div class="ui huge header">Edit blog</div>
+        <form method="POST" action="/blogs/<%= blog._id %>?_method=PUT"  class="ui form">
+            
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="blog[name]" value="<%= blog.name%>">
+            </div>
+            <div class="field">
+                <label>Image</label>
+                <input type="text" name="blog[image]" value="<%= blog.image%>">
+            </div>
+            <div class="field">
+                <label>blog content</label>
+                <textarea name="blog[body]"> <%= blog.body %> </textarea>
+            </div>
+            
+            
+            
+            <input type="submit" value="submit" class="ui violet basic button big">
+            
+            
+            
+        </form>
+    </div>    
+</body>    
+    
+</html>
