@@ -5,7 +5,7 @@ var bodyparser=require("body-parser");
 var methodOverride = require("method-override");
 
 app.use(bodyparser.urlencoded({extended:true}));
-mongoose.connect("mongodb+srv://arham:arham@cluster0.dkiwy.mongodb.net/yelpcamp?retryWrites=true&w=majority"  , { useNewUrlParser: true , useUnifiedTopology : true });
+mongoose.connect("removed string for sequrity purposes"  , { useNewUrlParser: true , useUnifiedTopology : true });
 app.use(methodOverride("_method"));
 
 
